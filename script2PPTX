@@ -1,0 +1,28 @@
+import fitz
+from pdf2pptx import convert_pdf2pptx
+from deep_translator import GoogleTranslator
+from pptx import Presentation
+
+pdf_file = "KDD process.pdf"
+pptx_file = "KDD process.pptx"
+translated_pptx = "KDD process_translated.pptx"
+
+# Convert PDF to PowerPoint 
+convert_pdf2pptx(pdf_file, pptx_file, resolution=300, start_page=0, page_count=None)
+
+# Extract and translate text
+translator = GoogleTranslator(source="auto", target="it")  # Change target language
+
+doc = fitz.open(pdf_file)
+translated_texts = [translator.translate(page.get_text("text")) for page in doc]
+
+# Replace text in PowerPoint
+ppt = Presentation(pptx_file)
+for i, slide in enumerate(ppt.slides):
+    for shape in slide.shapes:
+        if shape.has_text_frame and i < len(translated_texts):
+            shape.text = translated_texts[i]
+
+ppt.save(translated_pptx)
+
+print(f"Translated PowerPoint saved as {translated_pptx}")
