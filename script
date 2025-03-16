@@ -1,0 +1,23 @@
+import fitz  #Before you should have installed PyMuPDF
+from deep_translator import GoogleTranslator
+
+# Load PDF
+pdf_path = "KDD process.pdf"
+doc = fitz.open(pdf_path)
+
+# Translator (English to Italian, or other languages as needed)
+translator = GoogleTranslator(source="auto", target="it")
+
+translated_text = []
+
+# Extract and translate text
+for page in doc:
+    text = page.get_text()
+    translated_text.append(translator.translate(text))
+
+# Save translated text to a new file
+translated_pdf_path = "translated_doc.txt"
+with open(translated_pdf_path, "w", encoding="utf-8") as f:
+    f.write("\n\n".join(translated_text))
+
+print(f"Translation saved to {translated_pdf_path}")
